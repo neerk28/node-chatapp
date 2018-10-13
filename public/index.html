@@ -1,12 +1,25 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="utf-8" />
     <title>Welcome page</title>
 </head>
+
 <body>
     <p>Welcome to chat app</p>
-    <script src = "/socket.io/socket.io.js"></script>
-    <script src = "js/index.js"></script>
+
+    <ol id="messages"></ol>
+    
+    <form id="input-message">
+        <input name="message" type="text" placeholder="Enter a message" />
+        <button>Send</button>
+    </form>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="js/libs/jquery-3.3.1.min.js"></script>
+    <script src="js/index.js"></script>
+    
 </body>
+
 </html>
