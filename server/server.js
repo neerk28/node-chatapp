@@ -30,12 +30,19 @@ io.on('connection', (socket) => {
     }); 
 
     socket.on('createMessage', (newMessage, callback) => {
-        io.emit('newMessage',{
+        io.emit('newMessage',{ // note: its io here not socket
             from: newMessage.from,
             text: newMessage.text,
             createdAt: new Date().getTime()
         });
         callback('This is from server');
+    });
+
+    socket.on('createLocationMessage', (coords) => {
+        io.emit('newLocationMessage',{ // note: its io here not socket
+            from: coords.from,
+            url: `https://maps.google.com?q=${coords.latitude},${coords.longitude}`
+        });
     });
 
     socket.on('disconnect',() =>{
