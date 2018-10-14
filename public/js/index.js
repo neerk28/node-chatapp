@@ -5,19 +5,24 @@ socket.on('connect', () => {
 
 socket.on('newMessage', (newMessage) => {
     var formattedDate = moment(newMessage.createdAt).format('h:mm a');
-    var li = jQuery('<li></li>');
-    li.text(`${newMessage.from} ${formattedDate} : ${newMessage.text}`);
-    jQuery('#messages').append(li);
+    var template = jQuery('#message-template').html(); //get the html template in this id
+    var html = Mustache.render(template, {
+        from: newMessage.from,
+        createdAt: formattedDate,
+        text: newMessage.text
+    });
+    jQuery('#messages').append(html);
 });
 
 socket.on('newLocationMessage', (location) => {
     var formattedDate = moment(location.createdAt).format('h:mm a');
-    var li = jQuery('<li></li>');
-    var a = jQuery('<a target="_blank">My Current Location</a>');
-    li.text(`${location.from} ${formattedDate} : `)
-    a.attr('href', location.url);
-    li.append(a);
-    jQuery('#messages').append(li);
+    var template = jQuery('#location-message-template').html(); //get the html template in this id
+    var html = Mustache.render(template, { //render the html using Mustache
+        from: location.from,
+        createdAt: formattedDate,
+        url: location.url
+    });
+    jQuery('#messages').append(html);
 });
 
 socket.on('disconnect', () => {
