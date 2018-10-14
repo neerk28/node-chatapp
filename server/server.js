@@ -2,6 +2,7 @@ const express = require('express');
 const http = require('http');
 const path = require('path');
 const socketIO = require('socket.io');
+const moment = require('moment');
 
 var app = express();
 var port = process.env.PORT || 3000;
@@ -33,7 +34,7 @@ io.on('connection', (socket) => {
         io.emit('newMessage',{ // note: its io here not socket
             from: newMessage.from,
             text: newMessage.text,
-            createdAt: new Date().getTime()
+            createdAt: moment()
         });
         callback('This is from server');
     });
@@ -41,7 +42,8 @@ io.on('connection', (socket) => {
     socket.on('createLocationMessage', (coords) => {
         io.emit('newLocationMessage',{ // note: its io here not socket
             from: coords.from,
-            url: `https://maps.google.com?q=${coords.latitude},${coords.longitude}`
+            url: `https://maps.google.com?q=${coords.latitude},${coords.longitude}`,
+            createdAt: moment()
         });
     });
 
