@@ -2,7 +2,7 @@ var socket = io(); //function given by loading the socket.io js file
 socket.on('connect', () => {
     console.log('Connected to Server');
 });
-function scrollBottom(){
+function scrollBottom() {
     var messages = jQuery('#messages');
     var newMessage = messages.children('li:last-child');
     var clientHeight = messages.prop('clientHeight');
@@ -10,7 +10,7 @@ function scrollBottom(){
     var scrollHeight = messages.prop('scrollHeight');
     var msgHeight = newMessage.innerHeight();
     var lastMsgHeight = newMessage.prev().innerHeight();
-    if(clientHeight + scrollTop + msgHeight + lastMsgHeight > scrollHeight){
+    if (clientHeight + scrollTop + msgHeight + lastMsgHeight > scrollHeight) {
         messages.scrollTop(scrollHeight);
     }
 }
@@ -44,32 +44,35 @@ socket.on('disconnect', () => {
 })
 
 var messageBox = jQuery('[name=message]');
-jQuery('#input-message').on('submit', function(e){
+jQuery('#input-message').on('submit', function (e) {
     e.preventDefault(); // stop browser refreshing
-    socket.emit('createMessage', {
-        from: 'User',
-        text: messageBox.val()
-    }, function(){
-        messageBox.val('');
-    });
+    var text = messageBox.val().trim();
+    if (text.length > 0) {
+        socket.emit('createMessage', {
+            from: 'User',
+            text: messageBox.val()
+        }, function () {
+            messageBox.val('');
+        });
+    }
 });
 
 var locationButton = jQuery('#send-location');
-locationButton.on('click', function(){
-    if(!navigator.geolocation){
+locationButton.on('click', function () {
+    if (!navigator.geolocation) {
         return alert('Geolocation not supported in this browser');
     }
-    locationButton.attr('disabled','disabled').text('Sending location...');
-    navigator.geolocation.getCurrentPosition(function(position){
+    locationButton.attr('disabled', 'disabled').text('Sending location...');
+    navigator.geolocation.getCurrentPosition(function (position) {
         locationButton.removeAttr('disabled').text('Send location');
         socket.emit('createLocationMessage', {
             from: 'User',
             latitude: position.coords.latitude,
             longitude: position.coords.longitude
         });
-    },function(error){
+    }, function (error) {
         locationButton.removeAttr('disabled').text('Send location');
         return alert('Unable to fetch location');
     })
-    
+
 })
