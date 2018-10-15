@@ -1,6 +1,16 @@
 var socket = io(); //function given by loading the socket.io js file
+
 socket.on('connect', () => {
     console.log('Connected to Server');
+    var params = jQuery.deparam(window.location.search);
+    socket.emit('join', params, function (err) {
+        if (err) {
+            alert(err);
+            window.location.href = '/'; //redirect to home page
+        } else {
+            console.log('ALL OKAY')
+        }
+    })
 });
 function scrollBottom() {
     var messages = jQuery('#messages');
@@ -39,6 +49,14 @@ socket.on('newLocationMessage', (location) => {
     scrollBottom();
 });
 
+socket.on('updateUsersList', (users) => {
+    var ol = jQuery('<ol></ol>');
+    users.forEach(element => {
+        ol.append(jQuery('<li></li>').text(element));
+    });
+    jQuery('#users').html(ol);
+});
+
 socket.on('disconnect', () => {
     console.log('Disconnected from Server');
 })
@@ -46,15 +64,11 @@ socket.on('disconnect', () => {
 var messageBox = jQuery('[name=message]');
 jQuery('#input-message').on('submit', function (e) {
     e.preventDefault(); // stop browser refreshing
-    var text = messageBox.val().trim();
-    if (text.length > 0) {
-        socket.emit('createMessage', {
-            from: 'User',
-            text: messageBox.val()
-        }, function () {
-            messageBox.val('');
-        });
-    }
+    socket.emit('createMessage', {
+        text: messageBox.val()
+    }, function () {
+        messageBox.val('');
+    });
 });
 
 var locationButton = jQuery('#send-location');
@@ -66,7 +80,6 @@ locationButton.on('click', function () {
     navigator.geolocation.getCurrentPosition(function (position) {
         locationButton.removeAttr('disabled').text('Send location');
         socket.emit('createLocationMessage', {
-            from: 'User',
             latitude: position.coords.latitude,
             longitude: position.coords.longitude
         });
