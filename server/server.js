@@ -43,9 +43,9 @@ io.on('connection', (socket) => {
         if(!isRealString(params.name) && !isRealString(params.room)){
             callback('Display Name and Room Name required');
         }
-        socket.join(params.room.toUpperCase()); //join a room
+        socket.join(params.room); //join a room
         users.removeUser(socket.id);
-        users.addUser(socket.id, params.name.toUpperCase(), params.room.toUpperCase());
+        users.addUser(socket.id, params.name, params.room);
 
         io.to(params.room).emit('updateUsersList', users.getUsersList(params.room));
 
@@ -57,7 +57,7 @@ io.on('connection', (socket) => {
     
         socket.broadcast.to(params.room).emit('newMessage',{ // broadcast only to that room specified
             from: 'ADMIN',
-            text: `${params.name.toUpperCase()} joined`,
+            text: `${params.name} joined`,
             createdAt: moment()
         }); 
         callback();

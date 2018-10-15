@@ -3,12 +3,12 @@ var socket = io(); //function given by loading the socket.io js file
 socket.on('connect', () => {
     console.log('Connected to Server');
     var params = jQuery.deparam(window.location.search);
+    params.name= params.name.toUpperCase();
+    params.room = params.room.toUpperCase();
     socket.emit('join', params, function (err) {
         if (err) {
             alert(err);
             window.location.href = '/'; //redirect to home page
-        } else {
-            console.log('ALL OKAY')
         }
     })
 });
