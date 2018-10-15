@@ -45,7 +45,7 @@ io.on('connection', (socket) => {
         }
         socket.join(params.room); //join a room
         users.removeUser(socket.id);
-        users.addUser(socket.id, params.name.toUpperCase(), params.room);
+        users.addUser(socket.id, params.name.toUpperCase(), params.room.toUpperCase());
 
         io.to(params.room).emit('updateUsersList', users.getUsersList(params.room));
 
